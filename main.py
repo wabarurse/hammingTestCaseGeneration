@@ -3,6 +3,11 @@ from google.genai import types
 from pydantic import BaseModel
 from aiRules import aiRules
 from testInput import testInput
+import dotenv
+import os
+
+dotenv.load_dotenv()
+
 
 class schema(BaseModel):
     scenarioName: str
@@ -18,7 +23,7 @@ class schema(BaseModel):
 def generateTestCases(input, numTestCases) -> list[schema]: 
     try:
         input = "input: " + input + "\nNumber of test cases: " + str(numTestCases) + "\n" + "your rules: " + aiRules
-        geminiClient = genai.Client(api_key="AIzaSyD0XqgVIfyjM196_ibNyeSo5_DJhmmRjTY")
+        geminiClient = genai.Client(api_key=os.getenv("GEMINI_KEY"))
         response = geminiClient.models.generate_content(
             model="gemini-2.0-flash",
             contents=input,
@@ -32,4 +37,4 @@ def generateTestCases(input, numTestCases) -> list[schema]:
         print(e)
         return []
 
-print(generateTestCases(testInput, 20))
+print(generateTestCases(testInput, 10))
